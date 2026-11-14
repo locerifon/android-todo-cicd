@@ -1,0 +1,33 @@
+default_platform(:android)
+
+platform :android do
+  desc "Build Release APK and Deploy to Firebase App Distribution"
+  lane :distribute do
+    # 1. Сборка Release APK с помощью Gradle
+    gradle(
+      task: "assemble",
+      build_type: "Release"
+    )
+
+    # 2. Публикация в Firebase App Distribution
+    if ENV["FIREBASE_SERVICE_ACCOUNT"] && ENV["FIREBASE_SERVICE_ACCOUNT"].length > 10
+      firebase_app_distribution(
+        app: ENV["FIREBASE_APP_ID"] || "1:1234567890:android:abcdef",
+        service_credentials_file_content: ENV["FIREBASE_SERVICE_ACCOUNT"],
+        groups: "qa-team, beta-testers",
+        android_artifact_type: "APK",
+        release_notes: "Автоматическая сборка из ветки main через GitHub Actions & Fastlane"
+      )
+    else
+      UI.message("FIREBASE_SERVICE_ACCOUNT не настроен, пропуск загрузки в Firebase.")
+    end
+  end
+
+  desc "Сборка релизного бандла AAB (Задание А)"
+  lane :bundle do
+    gradle(
+      task: "bundle",
+      build_type: "Release"
+    )
+  end
+end
