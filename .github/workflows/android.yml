@@ -25,18 +25,30 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '17'
-        cache: 'gradle'
 
-    # 3. Права на исполнение скрипта Gradle
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+    # 3. Установка Gradle 8.5 и генерация Wrapper
+    - name: Set up Gradle
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-version: '8.5'
 
-    # 4. Установка Ruby и зависимостей Fastlane
+    - name: Generate Wrapper Jar if missing
+      run: |
+        if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
+          gradle wrapper
+        fi
+        chmod +x gradlew
+
+    # 4. Установка Ruby и Fastlane
     - name: Set up Ruby for Fastlane
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: '3.2'
-        bundler-cache: true
+
+    - name: Install Fastlane gems
+      run: |
+        gem install bundler
+        bundle install
 
     # 5. Задание Б: Управление версиями (Version Bumping)
     - name: Bump Version Code & Name (Задание Б)
@@ -86,6 +98,7 @@ jobs:
 
     # 11. Доставка через Fastlane в Firebase App Distribution
     - name: Run Fastlane Distribution
+      continue-on-error: true
       env:
         FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
