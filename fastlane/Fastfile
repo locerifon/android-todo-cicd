@@ -3,13 +3,10 @@ default_platform(:android)
 platform :android do
   desc "Build Release APK and Deploy to Firebase App Distribution"
   lane :distribute do
-    # 1. Сборка Release APK с помощью Gradle
     gradle(
       task: "assemble",
       build_type: "Release"
     )
-
-    # 2. Публикация в Firebase App Distribution
     if ENV["FIREBASE_SERVICE_ACCOUNT"] && ENV["FIREBASE_SERVICE_ACCOUNT"].length > 10
       firebase_app_distribution(
         app: ENV["FIREBASE_APP_ID"] || "1:1234567890:android:abcdef",
@@ -28,6 +25,29 @@ platform :android do
     gradle(
       task: "bundle",
       build_type: "Release"
+    )
+  end
+
+  desc "Deploy a new Internal Test Build"
+  lane :internal do
+    gradle(task: "bundleRelease")
+    upload_to_play_store(
+      track: 'internal',
+      aab: 'app/build/outputs/bundle/release/app-release.aab',
+      skip_upload_metadata: true,
+      skip_upload_changelogs: false,
+      json_key_data: ENV['PLAY_STORE_JSON_KEY']
+    )
+  end
+
+  desc "Promote from Internal to Production"
+  lane :promote_prod do
+    supply(
+      track: 'internal',
+      track_promote_to: 'production',
+      version_code: google_play_track_version_codes(track: 'internal').last,
+      rollout: '1.0',
+      json_key_data: ENV['PLAY_STORE_JSON_KEY']
     )
   end
 end
