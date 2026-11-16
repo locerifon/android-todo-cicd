@@ -1,0 +1,14 @@
+name: Generate Keystore
+on: workflow_dispatch
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Key and Base64
+        run: |
+          keytool -genkey -v -keystore new-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key0 -storepass android123 -keypass android123 -dname "CN=Vladislav, OU=Dev, O=IT, C=RU"
+          echo "===== СКОПИРУЙ ТЕКСТ НИЖЕ ====="
+          base64 -w 0 new-key.jks
+          echo ""
+          echo "==============================="
