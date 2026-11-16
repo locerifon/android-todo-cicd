@@ -1,0 +1,10 @@
+﻿TodoApp is a modern, reliable, and fast task management application engineered following the highest standards of mobile development and post-release maintenance.
+
+Key Features:
+• Intuitive task tracking: manage, organize, and prioritize daily activities with ease.
+• Dynamic Feature Toggles: experience instant feature activation powered by Firebase Remote Config without waiting for store updates.
+• High Stability: continuous monitoring via Google Play Android Vitals and Crashlytics.
+• Privacy & Security: zero unnecessary permissions, fully encrypted transport.
+
+Developed as part of post-release deployment & maintenance coursework.
+Lead Developer: Krasnoshchekov V.N.

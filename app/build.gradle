@@ -1,21 +1,28 @@
 plugins {
     id 'com.android.application'
-    // Если проект на Kotlin, раскомментируй следующую строку:
-    // id 'org.jetbrains.kotlin.android'
-    // Для Задания Б (Firebase Remote Config) потребуется плагин google-services:
-    // id 'com.google.gms.google-services'
+    id 'org.jetbrains.kotlin.android'
+}
+
+def getCommitCount() {
+    try {
+        def process = new ProcessBuilder("git", "rev-list", "--count", "HEAD")
+            .redirectErrorStream(true).start()
+        return process.inputStream.text.trim().toInteger()
+    } catch (Exception ignored) {
+        return 1
+    }
 }
 
 android {
     namespace "com.locerifon.todo"
-    compileSdk 36
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.locerifon.todo"
         minSdk 24
         targetSdk 33
-        versionCode 42
-        versionName "2.1.4"
+        versionCode getCommitCount()
+        versionName "2.1.${getCommitCount()}"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -28,9 +35,9 @@ android {
         }
     }
 
-   buildTypes {
+    buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
@@ -43,16 +50,16 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
 }
 
 dependencies {
+    implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    
-    // Зависимости для Задания Б (Firebase Remote Config)
-    // implementation platform('com.google.firebase:firebase-bom:32.7.0')
-    // implementation 'com.google.firebase:firebase-config'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
