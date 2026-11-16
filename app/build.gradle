@@ -1,50 +1,41 @@
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    // Если проект на Kotlin, раскомментируй следующую строку:
+    // id 'org.jetbrains.kotlin.android'
+    // Для Задания Б (Firebase Remote Config) потребуется плагин google-services:
+    // id 'com.google.gms.google-services'
 }
 
 android {
-    namespace 'com.example.todoapp'
-    compileSdk 34
+    namespace "com.locerifon.todo"
+    compileSdk 36
 
     defaultConfig {
-        applicationId "com.example.todoapp"
+        applicationId "com.locerifon.todo"
         minSdk 24
-        targetSdk 34
-        versionCode 1
-        versionName "1.0.0"
-
+        targetSdk 33
+        versionCode 42
+        versionName "2.1.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
         release {
-            def keystoreFile = file(System.getenv("KEYSTORE_PATH") ?: "keystore.jks")
-            if (keystoreFile.exists()) {
-                storeFile keystoreFile
-                storePassword System.getenv("KEYSTORE_PASSWORD") ?: "password123"
-                keyAlias System.getenv("KEY_ALIAS") ?: "key0"
-                keyPassword System.getenv("KEY_PASSWORD") ?: "password123"
-            }
+            storeFile file("keystore.jks")
+            storePassword System.getenv("KEYSTORE_PASSWORD") ?: "password"
+            keyAlias System.getenv("KEY_ALIAS") ?: "alias"
+            keyPassword System.getenv("KEY_PASSWORD") ?: "password"
         }
     }
 
     buildTypes {
+        release {
+            isMinifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
         debug {
             applicationIdSuffix ".debug"
-            debuggable true
-        }
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            
-            // Если ключ подписи доступен — используем его, иначе подписываем debug-ключом для теста
-            def keystoreFile = file(System.getenv("KEYSTORE_PATH") ?: "keystore.jks")
-            if (keystoreFile.exists()) {
-                signingConfig signingConfigs.release
-            } else {
-                signingConfig signingConfigs.debug
-            }
         }
     }
 
@@ -52,18 +43,17 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-
-    kotlinOptions {
-        jvmTarget = '17'
-    }
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'com.google.android.material:material:1.10.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     
+    // Зависимости для Задания Б (Firebase Remote Config)
+    // implementation platform('com.google.firebase:firebase-bom:32.7.0')
+    // implementation 'com.google.firebase:firebase-config'
+
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
