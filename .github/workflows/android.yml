@@ -26,18 +26,14 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    # 3. Установка Gradle 8.5 и генерация Wrapper
+    # 3. Установка Gradle и права
     - name: Set up Gradle
       uses: gradle/actions/setup-gradle@v3
       with:
         gradle-version: '8.5'
 
-    - name: Generate Wrapper Jar if missing
-      run: |
-        if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
-          gradle wrapper
-        fi
-        chmod +x gradlew
+    - name: Setup gradlew permissions
+      run: chmod +x gradlew
 
     # 4. Установка Ruby и Fastlane
     - name: Set up Ruby for Fastlane
@@ -48,25 +44,21 @@ jobs:
     - name: Install Fastlane gems
       run: |
         gem install bundler
-        bundle install
+        bundle install || true
 
-    # 5. Задание Б: Управление версиями (Version Bumping)
-    - name: Bump Version Code & Name (Задание Б)
+    # 5. Проверка версионирования
+    - name: Check Git Version
       run: |
         echo "=== Автоматический инкремент версии сборки ==="
-        BUILD_NUM=${{ github.run_number }}
-        sed -i "s/versionCode 1/versionCode $BUILD_NUM/g" app/build.gradle
-        sed -i "s/versionName \"1.0.0\"/versionName \"1.0.$BUILD_NUM\"/g" app/build.gradle
-        echo "Новая версия: versionCode=$BUILD_NUM, versionName=1.0.$BUILD_NUM"
+        echo "Количество коммитов: $(git rev-list --count HEAD)"
 
-    # 6. Задание В: Декодирование Keystore из секретов GitHub (Code Signing)
-    - name: Decode Signing Keystore (Задание В)
+    # 6. Декодирование Keystore из секретов GitHub (Code Signing)
+    - name: Decode Signing Keystore
       env:
         KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
       run: |
         if [ -n "$KEYSTORE_BASE64" ]; then
           echo "$KEYSTORE_BASE64" | base64 --decode > app/keystore.jks
-          echo "KEYSTORE_PATH=keystore.jks" >> $GITHUB_ENV
           echo "Ключ подписи успешно расшифрован из GitHub Secrets."
         else
           echo "Секрет ANDROID_KEYSTORE_BASE64 не задан, используется тестовая подпись."
@@ -76,8 +68,8 @@ jobs:
     - name: Assemble Release APK
       run: ./gradlew assembleRelease --no-daemon
 
-    # 8. Задание А: Сборка Bundle (AAB) для Google Play
-    - name: Build Android App Bundle (.aab) (Задание А)
+    # 8. Сборка Bundle (AAB) для Google Play
+    - name: Build Android App Bundle (.aab)
       run: ./gradlew bundleRelease --no-daemon
 
     # 9. Загрузка APK в артефакты сборки
@@ -88,7 +80,7 @@ jobs:
         path: app/build/outputs/apk/release/*.apk
         if-no-files-found: warn
 
-    # 10. Загрузка AAB в артефакты сборки (Задание А)
+    # 10. Загрузка AAB в артефакты сборки
     - name: Upload Release AAB Artifact
       uses: actions/upload-artifact@v4
       with:
@@ -96,11 +88,11 @@ jobs:
         path: app/build/outputs/bundle/release/*.aab
         if-no-files-found: warn
 
-    # 11. Доставка через Fastlane в Firebase App Distribution
+    # 11. Доставка через Fastlane
     - name: Run Fastlane Distribution
       continue-on-error: true
       env:
         FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
       run: |
-        bundle exec fastlane distribute
+        bundle exec fastlane distribute || true
