@@ -29,17 +29,19 @@ android {
     signingConfigs {
         release {
             storeFile file("keystore.jks")
-            storePassword System.getenv("KEYSTORE_PASSWORD") ?: "android123"
+            storePassword System.getenv("KEYSTORE_PASSWORD") ?: "password123"
             keyAlias System.getenv("KEY_ALIAS") ?: "key0"
-            keyPassword System.getenv("KEY_PASSWORD") ?: "android123"
+            keyPassword System.getenv("KEY_PASSWORD") ?: "password123"
         }
     }
 
     buildTypes {
         release {
+            if (file("keystore.jks").exists()) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
         debug {
             applicationIdSuffix ".debug"

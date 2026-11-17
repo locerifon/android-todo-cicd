@@ -1,4 +1,4 @@
-package com.example.todoapp
+package com.locerifon.todo
 
 import android.os.Bundle
 import android.view.View

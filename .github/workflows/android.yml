@@ -66,11 +66,19 @@ jobs:
 
     # 7. Сборка релизного APK
     - name: Assemble Release APK
-      run: ./gradlew assembleRelease --no-daemon
+      env:
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      run: ./gradlew assembleRelease --stacktrace --no-daemon
 
     # 8. Сборка Bundle (AAB) для Google Play
     - name: Build Android App Bundle (.aab)
-      run: ./gradlew bundleRelease --no-daemon
+      env:
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      run: ./gradlew bundleRelease --stacktrace --no-daemon
 
     # 9. Загрузка APK в артефакты сборки
     - name: Upload Release APK Artifact
