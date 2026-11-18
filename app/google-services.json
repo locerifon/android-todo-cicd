@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "497451493617",
+    "project_id": "locerifon-b8930",
+    "storage_bucket": "locerifon-b8930.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:497451493617:android:18426fa50892999708a150",
+        "android_client_info": {
+          "package_name": "com.locerifon.todo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOFwoPEyYsueprzmeTGwcWDH0AiIPe0bI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

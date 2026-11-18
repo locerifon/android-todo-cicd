@@ -35,7 +35,7 @@
             android:background="#E5E7EB"
             android:paddingHorizontal="10dp"
             android:paddingVertical="4dp"
-            android:text="v2.1.12"
+            android:text="v2.1.14"
             android:textColor="#374151"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -45,10 +45,10 @@
         android:id="@+id/subText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Пострелизное сопровождение: CI/CD &amp; Remote Config"
+        android:text="Пострелизное сопровождение: CI/CD &amp; Firebase Remote Config"
         android:textColor="#6B7280"
         android:textSize="14sp"
-        android:layout_marginBottom="24dp" />
+        android:layout_marginBottom="20dp" />
 
     <!-- Список задач (Основной функционал) -->
     <com.google.android.material.card.MaterialCardView
@@ -93,7 +93,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="⏳ Проверить переключатели Feature Toggles"
+                android:text="✅ Подключить Firebase Remote Config"
                 android:textColor="#2563EB"
                 android:textSize="14sp" />
         </LinearLayout>
@@ -130,7 +130,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Функция активирована удаленно через Firebase Remote Config!"
+                android:text="Активировано удаленно через Firebase Remote Config (new_feature_enabled = true)"
                 android:textColor="#3B82F6"
                 android:textSize="13sp"
                 android:layout_marginBottom="12dp" />
@@ -176,48 +176,48 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Выполнено 94% задач. Продуктивность на максимуме!"
+                android:text="Выполнено 94% задач. Управляется флагом stats_banner_enabled."
                 android:textColor="#059669"
                 android:textSize="13sp" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Нижняя панель локального управления флагами (для тестирования) -->
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <LinearLayout
-        android:id="@+id/toggleControlPanel"
+    <!-- Статус и синхронизация с Firebase Remote Config -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#FFFFFF"
-        android:padding="12dp">
+        app:cardCornerRadius="12dp"
+        app:cardElevation="1dp"
+        app:cardBackgroundColor="#FFFFFF">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="🛠 Тестирование флагов Remote Config:"
-            android:textColor="#4B5563"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switchNewFeature"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Флаг: new_feature_enabled"
-            android:textSize="13sp" />
+            android:orientation="vertical"
+            android:padding="14dp">
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switchStatsFeature"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Флаг: stats_banner_enabled"
-            android:textSize="13sp" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/tvRemoteConfigStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Firebase Remote Config: загрузка флагов..."
+                android:textColor="#4B5563"
+                android:textSize="12sp"
+                android:layout_marginBottom="10dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSyncFirebase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🔄 Обновить флаги из Firebase"
+                app:cornerRadius="8dp"
+                android:backgroundTint="#4F46E5" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>
